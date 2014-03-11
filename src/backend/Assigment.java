@@ -1,3 +1,7 @@
+package backend;
+
+import backend.Agent;
+
 /**
  * Created by richard on 25.2.2014.
  */

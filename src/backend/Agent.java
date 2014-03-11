@@ -1,7 +1,9 @@
+package backend;
+
 /**
  * Created by richard on 22.2.2014.
  */
-public abstract class Agent {
+public class Agent {
 
     private Long id;
     private String name;
