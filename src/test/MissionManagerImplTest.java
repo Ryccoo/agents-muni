@@ -46,9 +46,14 @@ public class MissionManagerImplTest {
         assertNull(manager.findMission(mission2.getId()));
     }
 
+
+    @Test
+    public void testFindNonExisting() throws Exception {
+        assertNull(manager.findMission(42l));
+    }
+
     @Test
     public void testFindMission() throws Exception {
-        assertNull(manager.findMission(42l));
         Mission mission = newMission("Zabitie prezidenta", "USA", "Urobit co najtichsie", true);
         manager.createMission(mission);
         Long missionID = mission.getId();
