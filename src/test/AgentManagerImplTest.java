@@ -23,14 +23,19 @@ public class AgentManagerImplTest {
 
     @Test
     public void testUpdateAgent() throws Exception {
+        fail("not implemented yet");
+    }
 
+    @Test
+    public void testFindNonExistingAgent() throws Exception {
+        assertNull(manager.findAgent(42l));
     }
 
     @Test
     public void testFindAgent() throws Exception {
 
-        assertNull(manager.findAgent(42l));
         Agent agent = newAgent("Jano Laco", "Medium killer", true);
+        Agent agent2 = newAgent("Sterling Archer", "Literally rank archer", true);
         manager.addAgent(agent);
         Long agentID = agent.getId();
         Agent result = manager.findAgent(agentID);
@@ -41,7 +46,7 @@ public class AgentManagerImplTest {
 
     @Test
     public void testFindAllAgents() throws Exception {
-
+        fail("not implemented yet");
     }
 
     @Test
