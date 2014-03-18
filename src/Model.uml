@@ -2,12 +2,32 @@
 <Diagram>
   <ID>JAVA</ID>
   <OriginalElement />
-  <nodes />
+  <nodes>
+    <node x="-416.0" y="-265.0">backend.AssigmentManager</node>
+    <node x="-121.0" y="74.0">backend.Agent</node>
+    <node x="-108.0" y="231.0">backend.AgentManager</node>
+    <node x="-574.0" y="231.0">backend.MissionManager</node>
+    <node x="-282.0" y="-89.0">backend.Assigment</node>
+    <node x="-460.0" y="65.0">backend.Mission</node>
+  </nodes>
   <notes />
-  <edges />
-  <settings layout="Hierarchic Group" zoom="1.0" x="0.0" y="0.0" />
+  <edges>
+    <edge source="backend.Assigment" target="backend.Mission">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="backend.Assigment" target="backend.Agent">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="1.0" y="101.0" />
   <SelectedNodes />
-  <Categories />
+  <Categories>
+    <Category>Methods</Category>
+    <Category>Properties</Category>
+  </Categories>
   <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
 </Diagram>
 
