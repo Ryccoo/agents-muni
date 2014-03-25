@@ -2,28 +2,50 @@ package test;
 
 import backend.Agent;
 import backend.AgentManagerImpl;
+import java.util.List;
+import db.AgentsTable;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Connection;
 
 import static org.junit.Assert.*;
-
 /**
  * Created by richard on 11.3.2014.
  */
 public class AgentManagerImplTest {
 
     private AgentManagerImpl manager;
+    private Connection conn;
 
     @Before
-    public void setUp() throws SQLException {
-        manager = new AgentManagerImpl();
+    public void setUp() throws SQLException, ClassNotFoundException {
+        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
+        conn = DriverManager.getConnection(jdbc_path);
+        AgentsTable.create(conn);
+        manager = new AgentManagerImpl(conn);
+    }
+
+    @After
+    public void tearDown() throws SQLException {
+        AgentsTable.drop(conn);
     }
 
     @Test
     public void testUpdateAgent() throws Exception {
-        fail("not implemented yet");
+        String new_name = "Jano Halak";
+        Agent agent = newAgent("Jano Laco", "Medium killer", true);
+        manager.addAgent(agent);
+
+        agent.setName(new_name);
+        Boolean ret = manager.updateAgent(agent);
+        assertTrue("Agent was not updated correctly", ret);
+        Agent result = manager.findAgent(agent.getId());
+        assertEquals(new_name, result.getName());
     }
 
     @Test
@@ -46,7 +68,13 @@ public class AgentManagerImplTest {
 
     @Test
     public void testFindAllAgents() throws Exception {
-        fail("not implemented yet");
+        Agent agent1 = newAgent("Jano Laco", "Medium killer", true);
+        Agent agent2 = newAgent("Sterling Archer", "Literally rank archer", true);
+        manager.addAgent(agent1);
+        manager.addAgent(agent2);
+
+        List<Agent> result = manager.findAllAgents();
+        assertEquals(2, result.size());
     }
 
     @Test
