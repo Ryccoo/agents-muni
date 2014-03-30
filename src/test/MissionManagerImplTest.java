@@ -3,19 +3,55 @@ package test;
 import backend.Mission;
 import backend.MissionManager;
 import backend.MissionManagerImpl;
+import db.MissionTable;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import java.util.*;
+import utils.DBUtils;
+import org.apache.commons.dbcp2.BasicDataSource;
+
+import javax.sql.DataSource;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Connection;
 
 import static org.junit.Assert.*;
 
 /**
- * Created by tulak on 11.03.2014.
+ * Created by richard on 11.03.2014.
  */
 public class MissionManagerImplTest {
-    private MissionManager manager;
+    private MissionManagerImpl manager;
+    private DataSource dataSource;
+
+    private DataSource prepareDataSource() throws SQLException {
+        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
+        BasicDataSource dataSource = new BasicDataSource();
+        //we will use in memory database
+        dataSource.setUrl(jdbc_path);
+
+        Connection conn = null;
+        conn = dataSource.getConnection();
+        MissionTable.create(conn);
+        DBUtils.closeQuietly(conn);
+        return dataSource;
+    }
+
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws SQLException, ClassNotFoundException {
+        dataSource = prepareDataSource();
         manager = new MissionManagerImpl();
+        manager.setDataSource(dataSource);
+    }
+
+    @After
+    public void tearDown() throws SQLException {
+        Connection conn = null;
+        conn = dataSource.getConnection();
+        MissionTable.drop(conn);
+        DBUtils.closeQuietly(conn);
     }
 
     @Test
@@ -64,6 +100,29 @@ public class MissionManagerImplTest {
         assertDeepEquals(mission, result);
     }
 
+    @Test
+    public void testFindAllMissions() throws Exception {
+        Mission mission1 = newMission("Mission 1", "SVK", "Attack fico", true);
+        Mission mission2 = newMission("Mission 2", "CZ", "Finish FI", false);
+        manager.createMission(mission1);
+        manager.createMission(mission2);
+
+        List<Mission> result = manager.findAllMissions();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testUpdateMission() throws Exception {
+        String new_name = "Mission 2";
+        Mission mission = newMission("Mission 1", "Karibik", "Prestrelka", true);
+        manager.createMission(mission);
+
+        mission.setName(new_name);
+        manager.updateMission(mission);
+        Mission result = manager.findMission(mission.getId());
+        assertEquals(new_name, result.getName());
+    }
+
     private Mission newMission(String name, String destination, String description, boolean secret) {
 
         Mission tmp = new Mission();
@@ -85,4 +144,5 @@ public class MissionManagerImplTest {
         assertEquals(expected.isSecret(), actual.isSecret());
 
     }
+
 }

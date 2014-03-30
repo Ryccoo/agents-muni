@@ -8,7 +8,7 @@ public class Mission {
     private String name;
     private String destination;
     private String description;
-    private boolean secret;
+    private boolean secret = false;
 
     public Long getId() {
         return id;
@@ -50,4 +50,29 @@ public class Mission {
         this.secret = secret;
     }
 
+    public String toString() {
+        return "Mission {id="+id+", name=`"+name+",` destination=`"+destination+", description=`"+description+"`, secret="+secret+"}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Mission other = (Mission) obj;
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 42;
+        hash = 11 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
 }

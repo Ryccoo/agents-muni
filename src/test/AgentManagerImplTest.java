@@ -2,13 +2,16 @@ package test;
 
 import backend.Agent;
 import backend.AgentManagerImpl;
-import java.util.List;
 import db.AgentsTable;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+import java.util.*;
+import org.apache.commons.dbcp2.BasicDataSource;
+import utils.DBUtils;
 
+import javax.naming.Context;
+import javax.sql.DataSource;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Connection;
@@ -20,19 +23,34 @@ import static org.junit.Assert.*;
 public class AgentManagerImplTest {
 
     private AgentManagerImpl manager;
-    private Connection conn;
+    private DataSource dataSource;
+
+    private DataSource prepareDataSource() throws SQLException {
+        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
+        BasicDataSource dataSource = new BasicDataSource();
+        //we will use in memory database
+        dataSource.setUrl(jdbc_path);
+
+        Connection conn = null;
+        conn = dataSource.getConnection();
+        AgentsTable.create(conn);
+        DBUtils.closeQuietly(conn);
+        return dataSource;
+    }
 
     @Before
     public void setUp() throws SQLException, ClassNotFoundException {
-        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
-        conn = DriverManager.getConnection(jdbc_path);
-        AgentsTable.create(conn);
-        manager = new AgentManagerImpl(conn);
+        dataSource = prepareDataSource();
+        manager = new AgentManagerImpl();
+        manager.setDataSource(dataSource);
     }
 
     @After
     public void tearDown() throws SQLException {
+        Connection conn = null;
+        conn = dataSource.getConnection();
         AgentsTable.drop(conn);
+        DBUtils.closeQuietly(conn);
     }
 
     @Test
@@ -42,8 +60,7 @@ public class AgentManagerImplTest {
         manager.addAgent(agent);
 
         agent.setName(new_name);
-        Boolean ret = manager.updateAgent(agent);
-        assertTrue("Agent was not updated correctly", ret);
+        manager.updateAgent(agent);
         Agent result = manager.findAgent(agent.getId());
         assertEquals(new_name, result.getName());
     }

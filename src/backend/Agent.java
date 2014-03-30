@@ -8,7 +8,7 @@ public class Agent {
     private Long id;
     private String name;
     private String rank;
-    private boolean secret;
+    private boolean secret = false;
 
     public Long getId() {
         return id;

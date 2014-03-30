@@ -1,173 +1,155 @@
 package backend;
 
-import backend.Agent;
-import backend.AgentManager;
+import utils.DBUtils;
+import utils.ServiceFailureException;
+import utils.IllegalEntityException;
+import utils.ValidationException;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.DataSource;
 
 /**
  * Created by richard on 11.3.2014.
  */
 public class AgentManagerImpl implements AgentManager {
     public static final Logger logger = Logger.getLogger(AgentManagerImpl.class.getName());
-    private Connection conn;
+    private DataSource dataSource;
 
-    public AgentManagerImpl(Connection connection) {
-        this.conn = connection;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    private void checkDataSource() {
+        if (dataSource == null) {
+            throw new IllegalStateException("DataSource is not set");
+        }
     }
 
     @Override
-    public boolean updateAgent(Agent agent) {
-        if (agent == null) {
-            throw new IllegalArgumentException("agent is null");
-        }
-        if (agent.getId() == null) {
-            throw new IllegalArgumentException("agent is not stored");
-        }
+    public void updateAgent(Agent agent) throws ServiceFailureException {
+        checkDataSource();
+        validate(agent);
 
+        if (agent.getId() == null) {
+            throw new IllegalEntityException("body id is null");
+        }
+        Connection conn = null;
         PreparedStatement st = null;
-        Boolean ret = false;
         try {
-            st = conn.prepareStatement("UPDATE agents SET name = ?, rank = ?, secret = ? WHERE id = ?");
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false); // it will be turned on by closeQuietly
+            st = conn.prepareStatement(
+                    "UPDATE agents SET name = ?, rank = ?, secret = ? WHERE id = ?");
             st.setString(1, agent.getName());
             st.setString(2, agent.getRank());
             st.setBoolean(3, agent.isSecret());
             st.setLong(4, agent.getId());
 
             int updated = st.executeUpdate();
-            if(updated != 1) {
-                throw new ServiceFailureException("Internal error: Expected to update 1 record, updated `"+ updated+"` records");
-            }
-            ret = true;
+            DBUtils.checkUpdatesCount(updated, agent, false);
+            conn.commit();
         } catch (SQLException ex) {
-            throw new ServiceFailureException(
-                    "Error when updating agent with id " + agent.getId(), ex);
+            String msg = "Error when updating agent in the db";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
-            return ret;
+            DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
 
     @Override
-    public Agent findAgent(Long id) {
+    public Agent findAgent(Long id) throws ServiceFailureException {
+
+        checkDataSource();
+
+        if (id == null) {
+            throw new IllegalArgumentException("id is null");
+        }
+
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = conn.prepareStatement("SELECT id, name, rank, secret FROM agents WHERE id = ?");
+            conn = dataSource.getConnection();
+            st = conn.prepareStatement(
+                    "SELECT id, name, rank, secret FROM agents WHERE id = ?");
             st.setLong(1, id);
-            ResultSet rs = st.executeQuery();
-
-            if (rs.next()) {
-                Agent agent = resultSetToAgent(rs);
-
-                if (rs.next()) {
-                    throw new ServiceFailureException(
-                            "Internal error: More entities with the same id found "
-                                    + "(source id: " + id + ", found " + agent + " and " + resultSetToAgent(rs));
-                }
-
-                return agent;
-            } else {
-                return null;
-            }
-
+            return executeQueryForSingleAgent(st);
         } catch (SQLException ex) {
-            throw new ServiceFailureException(
-                    "Error when retrieving agent with id " + id, ex);
+            String msg = "Error when retrieving agent with id = " + id + " from DB";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
+            DBUtils.closeQuietly(conn, st);
         }
 
     }
 
     @Override
     public List<Agent> findAllAgents() {
+        checkDataSource();
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = conn.prepareStatement("SELECT id,name,rank,secret FROM agents");
-            ResultSet rs = st.executeQuery();
-
-            List<Agent> result = new ArrayList<Agent>();
-            while (rs.next()) {
-                result.add(resultSetToAgent(rs));
-            }
-            return result;
-
+            conn = dataSource.getConnection();
+            st = conn.prepareStatement(
+                    "SELECT id,name,rank,secret FROM agents");
+            return executeQueryForMultipleAgents(st);
         } catch (SQLException ex) {
-            throw new ServiceFailureException(
-                    "Error when retrieving all agents", ex);
+            String msg = "Error when retrieving all agents";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
+            DBUtils.closeQuietly(conn, st);
         }
     }
 
     @Override
-    public void removeAgent(Agent agent) {
+    public void removeAgent(Agent agent) throws ServiceFailureException {
+        checkDataSource();
         if (agent == null) {
             throw new IllegalArgumentException("agent is null");
         }
         if (agent.getId() == null) {
-            throw new IllegalArgumentException("agent is not stored");
+            throw new IllegalEntityException("agent is not stored");
         }
+        Connection conn = null;
         PreparedStatement st = null;
         try {
-            st = conn.prepareStatement("DELETE FROM agents WHERE id = ?");
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement(
+                    "DELETE FROM agents WHERE id = ?");
             st.setLong(1, agent.getId());
             int deleted = st.executeUpdate();
-            if(deleted != 1) {
-                throw new ServiceFailureException("Internal error: Expected to delete 1 record, deleted `"+ deleted +"` records");
-            }
+            DBUtils.checkUpdatesCount(deleted, agent, false);
+            conn.commit();
         } catch( SQLException ex) {
-            throw new ServiceFailureException("Error when removing agent " + agent, ex);
+            String msg = "Error when removing agent " + agent;
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
+            DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
 
     @Override
-    public void addAgent(Agent agent) {
-        if (agent == null) {
-            throw new IllegalArgumentException("agent is null");
-        }
+    public void addAgent(Agent agent) throws ServiceFailureException {
+        checkDataSource();
+        validate(agent);
         if (agent.getId() != null) {
-            throw new IllegalArgumentException("agent id is already set");
+            throw new IllegalEntityException("agent id is already set");
         }
-        if (agent.getName().length() == 0) {
-            throw new IllegalArgumentException("agent name must be set");
-        }
-        if (agent.getRank().length() == 0) {
-            throw new IllegalArgumentException("agent rank must be set");
-        }
-
+        Connection conn = null;
         PreparedStatement st = null;
         try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
             st = conn.prepareStatement(
                     "INSERT INTO agents (name,rank,secret) VALUES (?,?,?)",
                     Statement.RETURN_GENERATED_KEYS);
@@ -175,28 +157,44 @@ public class AgentManagerImpl implements AgentManager {
             st.setString(2, agent.getRank());
             st.setBoolean(3, agent.isSecret());
             int addedRows = st.executeUpdate();
-            if (addedRows != 1) {
-                throw new ServiceFailureException("Internal Error: More rows "
-                        + "inserted when trying to insert agent " + agent);
-            }
-
-            ResultSet keyRS = st.getGeneratedKeys();
-            agent.setId(getKey(keyRS, agent));
-
+            DBUtils.checkUpdatesCount(addedRows, agent, true);
+            Long id = DBUtils.getId(st.getGeneratedKeys());
+            agent.setId(id);
+            conn.commit();
         } catch (SQLException ex) {
-            throw new ServiceFailureException("Error when inserting agent " + agent, ex);
+            String msg = "Error when inserting agent " + agent;
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
         } finally {
-            if (st != null) {
-                try {
-                    st.close();
-                } catch (SQLException ex) {
-                    logger.log(Level.SEVERE, null, ex);
-                }
-            }
+            DBUtils.doRollbackQuietly(conn);
+            DBUtils.closeQuietly(conn, st);
         }
     }
 
-    private Agent resultSetToAgent(ResultSet rs) throws SQLException {
+    static Agent executeQueryForSingleAgent(PreparedStatement st) throws SQLException, ServiceFailureException {
+        ResultSet rs = st.executeQuery();
+        if (rs.next()) {
+            Agent result = resultSetToAgent(rs);
+            if (rs.next()) {
+                throw new ServiceFailureException(
+                        "Internal integrity error: more agents with the same id found!");
+            }
+            return result;
+        } else {
+            return null;
+        }
+    }
+
+    static List<Agent> executeQueryForMultipleAgents(PreparedStatement st) throws SQLException {
+        ResultSet rs = st.executeQuery();
+        List<Agent> result = new ArrayList<Agent>();
+        while (rs.next()) {
+            result.add(resultSetToAgent(rs));
+        }
+        return result;
+    }
+
+    static private Agent resultSetToAgent(ResultSet rs) throws SQLException {
         Agent a = new Agent();
         a.setId(rs.getLong("id"));
         a.setName(rs.getString("name"));
@@ -205,24 +203,15 @@ public class AgentManagerImpl implements AgentManager {
         return a;
     }
 
-    private Long getKey(ResultSet keyRS, Agent agent) throws ServiceFailureException, SQLException {
-        if (keyRS.next()) {
-            if (keyRS.getMetaData().getColumnCount() != 1) {
-                throw new ServiceFailureException("Internal Error: Generated key"
-                        + "retriving failed when trying to insert agent " + agent
-                        + " - wrong key fields count: " + keyRS.getMetaData().getColumnCount());
-            }
-            Long result = keyRS.getLong(1);
-            if (keyRS.next()) {
-                throw new ServiceFailureException("Internal Error: Generated key"
-                        + "retriving failed when trying to insert agent " + agent
-                        + " - more keys found");
-            }
-            return result;
-        } else {
-            throw new ServiceFailureException("Internal Error: Generated key"
-                    + "retriving failed when trying to insert agent " + agent
-                    + " - no key found");
+    static private void validate(Agent agent) {
+        if (agent == null) {
+            throw new IllegalArgumentException("agent is null");
+        }
+        if (agent.getName() == null) {
+            throw new ValidationException("name is null");
+        }
+        if (agent.getRank() == null) {
+            throw new ValidationException("no rank is set for agent");
         }
     }
 }
