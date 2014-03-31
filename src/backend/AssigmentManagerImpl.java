@@ -58,7 +58,7 @@ public class AssigmentManagerImpl implements AssigmentManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, description, destination, secret FROM missions");
+                    "STATETMENT HERE !"); // need a statement here :D   
             return AgentManagerImpl.executeQueryForMultipleAgents(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all missions from DB";
