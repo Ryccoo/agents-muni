@@ -126,7 +126,7 @@ public class AgentManagerImplTest {
 
     }
 
-    private Agent newAgent(String name, String rank, boolean secret) {
+    static Agent newAgent(String name, String rank, boolean secret) {
 
         Agent tmp = new Agent();
         tmp.setName(name);
@@ -137,7 +137,7 @@ public class AgentManagerImplTest {
 
     }
 
-    private void assertDeepEquals(Agent expected, Agent actual) {
+    static void assertDeepEquals(Agent expected, Agent actual) {
 
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());

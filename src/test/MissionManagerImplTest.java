@@ -123,7 +123,7 @@ public class MissionManagerImplTest {
         assertEquals(new_name, result.getName());
     }
 
-    private Mission newMission(String name, String destination, String description, boolean secret) {
+    static Mission newMission(String name, String destination, String description, boolean secret) {
 
         Mission tmp = new Mission();
         tmp.setName(name);
@@ -135,7 +135,7 @@ public class MissionManagerImplTest {
 
     }
 
-    private void assertDeepEquals(Mission expected, Mission actual) {
+    static void assertDeepEquals(Mission expected, Mission actual) {
 
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
