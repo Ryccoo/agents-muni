@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import java.util.*;
 import utils.DBUtils;
-import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
 import java.sql.DriverManager;

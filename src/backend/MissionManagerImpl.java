@@ -113,7 +113,7 @@ public class MissionManagerImpl implements MissionManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, description, desctination, secret FROM Grave");
+                    "SELECT id, name, description, destination, secret FROM missions");
             return executeQueryForMultipleMissions(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all missions from DB";
@@ -137,7 +137,7 @@ public class MissionManagerImpl implements MissionManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, description, desctination, secret FROM Grave WHERE id = ?");
+                    "SELECT id, name, description, destination, secret FROM missions WHERE id = ?");
             st.setLong(1, id);
             return executeQueryForSingleMission(st);
         } catch (SQLException ex) {

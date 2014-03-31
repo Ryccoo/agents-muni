@@ -13,7 +13,7 @@ public class MissionTable {
                 "id INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
                 "name VARCHAR(100)," +
                 "destination VARCHAR(100)," +
-                "description MESSAGE_TEXT ," +
+                "description CLOB," +
                 "secret BOOLEAN" +
                 ")").executeUpdate();
     }
