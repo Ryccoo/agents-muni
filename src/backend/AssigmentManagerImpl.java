@@ -58,7 +58,8 @@ public class AssigmentManagerImpl implements AssigmentManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "STATETMENT HERE !"); // need a statement here :D   
+                    "SELECT id, name, rank, secret FROM agents INNER JOIN agents_missions WHERE agents_missions.missionId = ?"); // need a statement here :D
+            st.setLong(1, mission.getId());
             return AgentManagerImpl.executeQueryForMultipleAgents(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all missions from DB";
@@ -83,7 +84,8 @@ public class AssigmentManagerImpl implements AssigmentManager {
         try {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
-                    "SELECT id, name, rank, secret FROM agents");
+                    "SELECT id, name, destination, description, secret FROM missions INNER JOIN agents_missions WHERE agents_missions.agentId = ?");
+            st.setLong(1, agent.getId());
             return MissionManagerImpl.executeQueryForMultipleMissions(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all missions from DB";
