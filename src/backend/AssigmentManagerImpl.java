@@ -37,11 +37,74 @@ public class AssigmentManagerImpl implements AssigmentManager {
 
     @Override
     public void assignAgentToMission(Agent agent, Mission mission) {
+        if (mission == null) {
+            throw new IllegalArgumentException("mission is null");
+        }
+        if (mission.getId() == null) {
+            throw new IllegalEntityException("mission id is null");
+        }
+        if (agent == null) {
+            throw new IllegalArgumentException("agent is null");
+        }
+        if (agent.getId() == null) {
+            throw new IllegalEntityException("agent id is null");
+        }
+        checkDataSource();
+        Connection conn = null;
+        PreparedStatement st = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement(
+                    "INSERT INTO agents_missions (agentId, missionId) VALUES (?, ?)"); // need a statement here :D
+            st.setLong(1, agent.getId());
+            st.setLong(2, mission.getId());
+            int inserted = st.executeUpdate();
+            DBUtils.checkUpdatesCount(inserted, agent, false);
+            conn.commit();
+        } catch (SQLException ex) {
+            String msg = "SQL Error when adding agent to mission";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
+        } finally {
+            DBUtils.closeQuietly(conn, st);
+        }
     }
 
     @Override
     public void removeAgentFromMission(Agent agent, Mission mission) {
-
+        if (mission == null) {
+            throw new IllegalArgumentException("mission is null");
+        }
+        if (mission.getId() == null) {
+            throw new IllegalEntityException("mission id is null");
+        }
+        if (agent == null) {
+            throw new IllegalArgumentException("agent is null");
+        }
+        if (agent.getId() == null) {
+            throw new IllegalEntityException("agent id is null");
+        }
+        checkDataSource();
+        Connection conn = null;
+        PreparedStatement st = null;
+        try {
+            conn = dataSource.getConnection();
+            conn.setAutoCommit(false);
+            st = conn.prepareStatement(
+                    "DELETE FROM agents_missions WHERE agentId = ? AND missionId = ?"); // need a statement here :D
+            st.setLong(1, agent.getId());
+            st.setLong(2, mission.getId());
+            int deleted = st.executeUpdate();
+            DBUtils.checkUpdatesCount(deleted, agent, false);
+            conn.commit();
+        } catch (SQLException ex) {
+            String msg = "SQL Error when adding agent to mission";
+            logger.log(Level.SEVERE, msg, ex);
+            throw new ServiceFailureException(msg, ex);
+        } finally {
+            DBUtils.closeQuietly(conn, st);
+        }
     }
 
     @Override
