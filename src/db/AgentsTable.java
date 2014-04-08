@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public abstract class AgentsTable {
     public static void create(Connection conn) throws SQLException {
         conn.prepareStatement("CREATE TABLE agents (" +
-                "id INTEGER NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
+                "id BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
                 "name VARCHAR(100)," +
                 "rank VARCHAR(50)," +
                 "secret BOOLEAN" +
