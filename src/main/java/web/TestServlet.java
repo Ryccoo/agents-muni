@@ -1,5 +1,14 @@
 package web;
 
+import backend.Agent;
+import backend.AgentManager;
+import backend.AgentManagerImpl;
+import db.AgentsTable;
+import db.CreateTables;
+import org.apache.commons.dbcp.BasicDataSource;
+import utils.DBUtils;
+
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -7,6 +16,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -21,6 +32,9 @@ public class TestServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        AgentManager agentManager = getAgentManager();
+        System.out.println(agentManager.findAllAgents().toString());
+
         Map<String, Map<String,Object>> m = new TreeMap<>();
 
         for(Locale l :Locale.getAvailableLocales()) {
@@ -34,6 +48,10 @@ public class TestServlet extends HttpServlet {
         request.setAttribute("jazyky", m);
 
         request.getRequestDispatcher("/testpage.jsp").forward(request, response);
+    }
+
+    private AgentManager getAgentManager() {
+        return (AgentManager) getServletContext().getAttribute("agentManager");
     }
 
 }

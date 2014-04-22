@@ -1,6 +1,9 @@
 package web;
 
 import backend.AgentManagerImpl;
+import backend.AssigmentManagerImpl;
+import backend.MissionManager;
+import backend.MissionManagerImpl;
 import db.AgentsTable;
 import db.CreateTables;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -26,16 +29,24 @@ public class ServerListener implements ServletContextListener {
         System.out.println("aplikace inicializována");
         ServletContext servletContext = ev.getServletContext();
         AgentManagerImpl agentManager = new AgentManagerImpl();
-        BasicDataSource dataSource = CreateTables.prepareDataSource("jdbc:derby:/home/richard/IdeaProjects/db/Agents;create=true");
-        Connection conn = null;
+        BasicDataSource ds;
+        ds = CreateTables.prepareDataSource("jdbc:derby:/home/richard/IdeaProjects/db/Agents;create=true");
+        ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+        Connection conn;
         try {
-            conn = dataSource.getConnection();
-            AgentsTable.create(conn);
-            DBUtils.closeQuietly(conn);
+            conn = ds.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        servletContext.setAttribute("agentManager");
+        AgentManagerImpl agentm = new AgentManagerImpl();
+        MissionManagerImpl mism = new MissionManagerImpl();
+        AssigmentManagerImpl asigm = new AssigmentManagerImpl();
+        agentm.setDataSource(ds);
+        mism.setDataSource(ds);
+        asigm.setDataSource(ds);
+        servletContext.setAttribute("agentManager", agentm);
+        servletContext.setAttribute("missionManager", mism);
+        servletContext.setAttribute("assigmentManager", asigm);
     }
 
     @Override
