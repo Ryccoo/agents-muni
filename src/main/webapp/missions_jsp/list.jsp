@@ -21,7 +21,10 @@
             <td><c:out value="${mission.destination}"/></td>
             <td><c:out value="${mission.secret}"/></td>
             <td><form method="post" action="${pageContext.request.contextPath}/missions/delete?id=${mission.id}"
-                      style="margin-bottom: 0;"><input type="submit" value="Smazat"></form></td>
+                      style="margin-bottom: 0;"><input type="submit" value="Delete"></form></td>
+            <td>
+                <a href="${pageContext.request.contextPath}/missions/edit?id=${mission.id}">Edit</a>
+            </td>
         </tr>
     </c:forEach>
 </table>

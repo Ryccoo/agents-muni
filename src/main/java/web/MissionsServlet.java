@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class MissionsServlet extends HttpServlet {
 
     private static final String LIST_JSP = "/missions_jsp/list.jsp";
+    private static final String EDIT_JSP = "/missions_jsp/edit.jsp";
     public static final String URL_MAPPING = "/missions";
 
     private static final Logger log = Logger.getLogger(
@@ -25,7 +26,16 @@ public class MissionsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        showMissionsList(request, response);
+        String action = request.getPathInfo();
+        if(action == null) action = "";
+        switch (action) {
+            case "/edit":
+                editMission(request, response);
+                return;
+            default:
+                showMissionsList(request, response);
+                return;
+        }
     }
 
     @Override
@@ -36,14 +46,13 @@ public class MissionsServlet extends HttpServlet {
         String action = request.getPathInfo();
         switch (action) {
             case "/add":
-                //načtení POST parametrů z formuláře
-                String name = request.getParameter("name");
-                String description = request.getParameter("description");
-                String destination = request.getParameter("destination");
-                Boolean secret = (request.getParameter("secret") != null);
-
-                //zpracování dat - vytvoření záznamu v databázi
                 try {
+                    //načtení POST parametrů z formuláře
+                    String name = request.getParameter("name");
+                    String description = request.getParameter("description");
+                    String destination = request.getParameter("destination");
+                    Boolean secret = (request.getParameter("secret") != null);
+
                     Mission mission = new Mission();
                     mission.setName(name);
                     mission.setDescription(description);
@@ -77,8 +86,35 @@ public class MissionsServlet extends HttpServlet {
                     return;
                 }
             case "/update":
-                //TODO
-                return;
+                try {
+                    Long id = Long.valueOf(request.getParameter("id"));
+                    String name = request.getParameter("name");
+                    String description = request.getParameter("description");
+                    String destination = request.getParameter("destination");
+                    Boolean secret = (request.getParameter("secret") != null);
+
+                    Mission mission = getMissionManager().findMission(id);
+                    mission.setName(name);
+                    mission.setDescription(description);
+                    mission.setDestination(destination);
+                    mission.setSecret(secret);
+
+                    request.setAttribute("mission", mission);
+
+                    getMissionManager().updateMission(mission);
+
+                    //redirect-after-POST je ochrana před vícenásobným odesláním formuláře
+                    response.sendRedirect(request.getContextPath()+URL_MAPPING);
+                    return;
+                } catch (ValidationException e) {
+                    request.setAttribute("chyba", e.getMessage());
+                    editMission(request, response);
+                    return;
+                } catch (ServiceFailureException e) {
+                    System.out.println("Cannot update mission: " + e.getStackTrace());
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    return;
+                }
             default:
                 System.out.println("Unknown action `" + action + "`");
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown action " + action);
@@ -94,6 +130,20 @@ public class MissionsServlet extends HttpServlet {
         try {
             request.setAttribute("missions", getMissionManager().findAllMissions());
             request.getRequestDispatcher(LIST_JSP).forward(request, response);
+        } catch (ServiceFailureException e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    private void editMission(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            if(request.getAttribute("mission") == null) {
+                Long id = Long.valueOf(request.getParameter("id"));
+                Mission mission = getMissionManager().findMission(id);
+                request.setAttribute("mission", mission);
+            }
+            request.getRequestDispatcher(EDIT_JSP).forward(request, response);
         } catch (ServiceFailureException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
