@@ -20,6 +20,9 @@
             <td><c:out value="${agent.secret}"/></td>
             <td><form method="post" action="${pageContext.request.contextPath}/agents/delete?id=${agent.id}"
                       style="margin-bottom: 0;"><input type="submit" value="Smazat"></form></td>
+            <td>
+                <a href="${pageContext.request.contextPath}/agents/edit?id=${agent.id}">Edit</a>
+            </td>
         </tr>
     </c:forEach>
 </table>

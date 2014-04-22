@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 public class AgentsServlet extends HttpServlet {
 
     private static final String LIST_JSP = "/agents_jsp/list.jsp";
+    private static final String EDIT_JSP = "/agents_jsp/edit.jsp";
     public static final String URL_MAPPING = "/agents";
 
     private static final Logger log = Logger.getLogger(
@@ -25,7 +26,16 @@ public class AgentsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        showMissionsList(request, response);
+        String action = request.getPathInfo();
+        if(action == null) action = "";
+        switch (action) {
+            case "/edit":
+                editAgent(request, response);
+                return;
+            default:
+                showAgentsList(request, response);
+                return;
+        }
     }
 
     @Override
@@ -36,13 +46,11 @@ public class AgentsServlet extends HttpServlet {
         String action = request.getPathInfo();
         switch (action) {
             case "/add":
-                //načtení POST parametrů z formuláře
-                String name = request.getParameter("name");
-                String rank = request.getParameter("rank");
-                Boolean secret = (request.getParameter("secret") != null);
-
-                //zpracování dat - vytvoření záznamu v databázi
                 try {
+                    String name = request.getParameter("name");
+                    String rank = request.getParameter("rank");
+                    Boolean secret = (request.getParameter("secret") != null);
+
                     Agent agent = new Agent();
                     agent.setName(name);
                     agent.setRank(rank);
@@ -54,7 +62,7 @@ public class AgentsServlet extends HttpServlet {
                     return;
                 } catch (ValidationException e) {
                     request.setAttribute("chyba", e.getMessage());
-                    showMissionsList(request, response);
+                    showAgentsList(request, response);
                     return;
                 } catch (ServiceFailureException e) {
                     System.out.println("Cannot add agent: " + e.getStackTrace());
@@ -75,8 +83,33 @@ public class AgentsServlet extends HttpServlet {
                     return;
                 }
             case "/update":
-                //TODO
-                return;
+                try {
+                    Long id = Long.valueOf(request.getParameter("id"));
+                    String name = request.getParameter("name");
+                    String rank = request.getParameter("rank");
+                    Boolean secret = (request.getParameter("secret") != null);
+
+                    Agent agent = getAgentManager().findAgent(id);
+                    agent.setName(name);
+                    agent.setRank(rank);
+                    agent.setSecret(secret);
+
+                    request.setAttribute("agent", agent);
+
+                    getAgentManager().updateAgent(agent);
+
+                    //redirect-after-POST je ochrana před vícenásobným odesláním formuláře
+                    response.sendRedirect(request.getContextPath()+URL_MAPPING);
+                    return;
+                } catch (ValidationException e) {
+                    request.setAttribute("chyba", e.getMessage());
+                    editAgent(request, response);
+                    return;
+                } catch (ServiceFailureException e) {
+                    System.out.println("Cannot update agent: " + e.getStackTrace());
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                    return;
+                }
             default:
                 System.out.println("Unknown action `" + action + "`");
                 response.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown action " + action);
@@ -88,10 +121,24 @@ public class AgentsServlet extends HttpServlet {
         return (AgentManager) getServletContext().getAttribute("agentManager");
     }
 
-    private void showMissionsList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    private void showAgentsList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
             request.setAttribute("agents", getAgentManager().findAllAgents());
             request.getRequestDispatcher(LIST_JSP).forward(request, response);
+        } catch (ServiceFailureException e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    private void editAgent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            if(request.getAttribute("agent") == null) {
+                Long id = Long.valueOf(request.getParameter("id"));
+                Agent agent = getAgentManager().findAgent(id);
+                request.setAttribute("agent", agent);
+            }
+            request.getRequestDispatcher(EDIT_JSP).forward(request, response);
         } catch (ServiceFailureException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
