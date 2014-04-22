@@ -5,30 +5,21 @@
   Time: 0:44
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
-
-<%! //kód mimo metodu service()
-    public String prictiJedna(String a) {
-        return Integer.toString(Integer.parseInt(a)+1);
-    }
-%>
+<%@page contentType="text/html;charset=utf-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
-    <body>
-        <%  //kód uvnitř metody service()
-            if(request.getMethod().equals("GET")) {
-        %>
-        <form method="post">
-            Zadejte číslo: <input name="cislo" value="">
-            <input type="submit" >
-        </form>
-        <%
-        } else if (request.getMethod().equals("POST")) {
-            String cislo = request.getParameter("cislo");
-            String plusjedna = prictiJedna(cislo);
-        %>
-        Výsledek <%out.println(cislo);%> + 1 je <%=plusjedna%>
-        <%
-            }
-        %>
-    </body>
+<body>
+
+    <hi>ISIS MANAGEMENT</hi>
+    <ul>
+        <li>Add Agent</li>
+        <li>Delete Agent</li>
+        <li>List Agents</li>
+        <li>Create mission</li>
+        <li>Delete mission</li>
+        <li>List Missions</li>
+        <li>Manage assigments</li>
+    </ul>
+
+</body>
 </html>
