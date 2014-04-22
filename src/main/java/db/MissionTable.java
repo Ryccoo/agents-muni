@@ -14,7 +14,7 @@ public class MissionTable {
                 "name VARCHAR(100)," +
                 "destination VARCHAR(100)," +
                 "description CLOB," +
-                "secret BOOLEAN" +
+                "secret SMALLINT " +
                 ")").executeUpdate();
     }
 

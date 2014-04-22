@@ -14,7 +14,7 @@ public abstract class AgentsTable {
                 "id BIGINT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY," +
                 "name VARCHAR(100)," +
                 "rank VARCHAR(50)," +
-                "secret BOOLEAN" +
+                "secret SMALLINT " +
                 ")").executeUpdate();
     }
 
