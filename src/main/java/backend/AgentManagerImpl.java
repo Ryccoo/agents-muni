@@ -1,16 +1,16 @@
 package backend;
 
 import utils.DBUtils;
-import utils.ServiceFailureException;
 import utils.IllegalEntityException;
+import utils.ServiceFailureException;
 import utils.ValidationException;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  * Created by richard on 11.3.2014.
@@ -207,11 +207,11 @@ public class AgentManagerImpl implements AgentManager {
         if (agent == null) {
             throw new IllegalArgumentException("agent is null");
         }
-        if (agent.getName() == null) {
-            throw new ValidationException("name is null");
+        if (agent.getName() == null || agent.getName().length() == 0) {
+            throw new ValidationException("name is not set");
         }
-        if (agent.getRank() == null) {
-            throw new ValidationException("no rank is set for agent");
+        if (agent.getRank() == null || agent.getRank().length() == 0) {
+            throw new ValidationException("rank is not set");
         }
     }
 }
