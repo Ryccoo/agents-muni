@@ -29,7 +29,7 @@
             <td><input type="checkbox" name="secret" value="1" <c:out value="${mission.secret ? 'checked' : ''}"/>/></td>
         </tr>
     </table>
-    <input type="Submit" value="Add" />
+    <input type="Submit" value="Update" />
 </form>
 
 </body>

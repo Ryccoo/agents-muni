@@ -12,13 +12,8 @@
 
     <hi>ISIS MANAGEMENT</hi>
     <ul>
-        <li>Add Agent</li>
-        <li>Delete Agent</li>
-        <li>List Agents</li>
-        <li>Create mission</li>
-        <li>Delete mission</li>
-        <li>List Missions</li>
-        <li>Manage assigments</li>
+        <li><a href="/agents/">Agents</a></li>
+        <li><a href="/missions/">Missions</a></li>
     </ul>
 
 </body>
