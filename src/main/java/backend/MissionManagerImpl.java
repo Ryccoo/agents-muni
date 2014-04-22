@@ -1,19 +1,16 @@
 package backend;
 
 import utils.DBUtils;
-import utils.ValidationException;
 import utils.IllegalEntityException;
 import utils.ServiceFailureException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import utils.ValidationException;
+
+import javax.sql.DataSource;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.DataSource;
 
 /**
  * Created by tulak on 11.03.2014.
@@ -220,7 +217,7 @@ public class MissionManagerImpl implements MissionManager {
         if (mission == null) {
             throw new IllegalArgumentException("mission is null");
         }
-        if (mission.getName() == null) {
+        if (mission.getName() == null || mission.getName().length() == 0) {
             throw new ValidationException("name is not set");
         }
         if (mission.getDestination() == null) {
