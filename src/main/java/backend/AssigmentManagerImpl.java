@@ -158,4 +158,20 @@ public class AssigmentManagerImpl implements AssigmentManager {
             DBUtils.closeQuietly(conn, st);
         }
     }
+
+    @Override
+    public void removeAllAgentMissions(Agent agent) {
+        List<Mission> missions = getAgentMissions(agent);
+        for(Mission mission : missions) {
+            removeAgentFromMission(agent, mission);
+        }
+    }
+
+    @Override
+    public void removeAllMissionAgents(Mission mission) {
+        List<Agent> agents = getMissionAgents(mission);
+        for(Agent agent : agents) {
+            removeAgentFromMission(agent, mission);
+        }
+    }
 }
