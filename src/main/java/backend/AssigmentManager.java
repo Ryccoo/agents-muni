@@ -10,6 +10,8 @@ import java.util.List;
 public interface AssigmentManager {
     void assignAgentToMission(Agent agent, Mission mission);
     void removeAgentFromMission(Agent agent, Mission mission);
+    void removeAllAgentMissions(Agent agent);
+    void removeAllMissionAgents(Mission mission);
     List<Agent> getMissionAgents(Mission mission);
     List<Mission> getAgentMissions(Agent agent);
 }
