@@ -2,9 +2,7 @@ package frontend.models;
 
 import backend.Agent;
 import backend.Mission;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import frontend.base.ui.MainUI;
-import sun.management.resources.agent;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -85,8 +83,8 @@ public class MissionsTableDataModel extends AbstractTableModel {
             case 2: return mission.getDestination();
             case 3: return mission.getDescription();
             case 4: return mission.isSecret();
-            case 5: return "Detail";
-            case 6: return "Delete";
+            case 5: return MainUI.guiBundle.getString("Gui.Base.Details");
+            case 6: return MainUI.guiBundle.getString("Gui.Base.Delete");
         }
         throw new IllegalArgumentException("Invalid column index.");
     }
@@ -120,23 +118,23 @@ public class MissionsTableDataModel extends AbstractTableModel {
     public String getColumnName(int column) {
         if(inDetailEdit) {
             switch (column) {
-                case 0: return "Assigned";
-                case 1: return "Id";
-                case 2: return "Name";
-                case 3: return "Destination";
-                case 4: return "Description";
-                case 5: return "Secret";
+                case 0: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Assigned.Label");
+                case 1: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Id.Label");
+                case 2: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Name.Label");
+                case 3: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Destination.Label");
+                case 4: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Description.Label");
+                case 5: return MainUI.missionsBundle.getString("Gui.Missions.Fields.IsSecret.Label");
                 default: throw new IllegalArgumentException("column index");
             }
         }
         switch (column) {
-            case 0: return "Id";
-            case 1: return "Name";
-            case 2: return "Destination";
-            case 3: return "Description";
-            case 4: return "Secret";
-            case 5: return "Detail";
-            case 6: return "Delete";
+            case 0: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Id.Label");
+            case 1: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Name.Label");
+            case 2: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Destination.Label");
+            case 3: return MainUI.missionsBundle.getString("Gui.Missions.Fields.Description.Label");
+            case 4: return MainUI.missionsBundle.getString("Gui.Missions.Fields.IsSecret.Label");
+            case 5: return MainUI.guiBundle.getString("Gui.Base.Details");
+            case 6: return MainUI.guiBundle.getString("Gui.Base.Delete");
             default: throw new IllegalArgumentException("column index");
         }
     }

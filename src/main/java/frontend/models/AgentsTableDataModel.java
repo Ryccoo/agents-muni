@@ -81,8 +81,8 @@ public class AgentsTableDataModel extends AbstractTableModel {
             case 1: return agent.getName();
             case 2: return agent.getRank();
             case 3: return agent.isSecret();
-            case 4: return "Detail";
-            case 5: return "Delete";
+            case 4: return MainUI.guiBundle.getString("Gui.Base.Details");
+            case 5: return MainUI.guiBundle.getString("Gui.Base.Delete");
         }
         throw new IllegalArgumentException("Invalid column index.");
     }
@@ -114,21 +114,21 @@ public class AgentsTableDataModel extends AbstractTableModel {
     public String getColumnName(int column) {
         if(inDetailEdit) {
             switch (column) {
-                case 0: return "Assigned";
-                case 1: return "Id";
-                case 2: return "Name";
-                case 3: return "Rank";
-                case 4: return "Secret";
+                case 0: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Assigned.Label");
+                case 1: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Id.Label");
+                case 2: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Name.Label");
+                case 3: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Rank.Label");
+                case 4: return MainUI.agentsBundle.getString("Gui.Agents.Fields.IsSecret.Label");
                 default: throw new IllegalArgumentException("column index");
             }
         }
         switch (column) {
-            case 0: return "Id";
-            case 1: return "Name";
-            case 2: return "Rank";
-            case 3: return "Secret";
-            case 4: return "Detail";
-            case 5: return "Delete";
+            case 0: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Id.Label");
+            case 1: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Name.Label");
+            case 2: return MainUI.agentsBundle.getString("Gui.Agents.Fields.Rank.Label");
+            case 3: return MainUI.agentsBundle.getString("Gui.Agents.Fields.IsSecret.Label");
+            case 4: return MainUI.guiBundle.getString("Gui.Base.Details");
+            case 5: return MainUI.guiBundle.getString("Gui.Base.Delete");
             default: throw new IllegalArgumentException("column index");
         }
     }

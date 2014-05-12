@@ -1,7 +1,7 @@
 package frontend.dialogs.ui;
 
 import backend.Agent;
-import sun.management.resources.agent;
+import frontend.base.ui.MainUI;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -57,11 +57,11 @@ public class AgentDialog extends JDialog {
         rank_required.setText("");
         boolean valid = true;
         if(agent_name.getText().isEmpty()) {
-            name_required.setText("Name is required");
+            name_required.setText(MainUI.agentsBundle.getString("Gui.Agents.Validations.Name.Required"));
             valid = false;
         }
         if(agent_rank.getText().isEmpty()) {
-            rank_required.setText("Rank is required");
+            rank_required.setText(MainUI.agentsBundle.getString("Gui.Agents.Validations.Rank.Required"));
             valid = false;
         }
         if(valid) {

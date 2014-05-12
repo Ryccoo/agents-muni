@@ -16,6 +16,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 /**
  * Created by richard on 28.4.2014.
@@ -25,6 +26,10 @@ public class MainUI {
     public static MissionManagerImpl missionManager = new MissionManagerImpl();
     public static AssigmentManagerImpl assigmentManager = new AssigmentManagerImpl();
     public static MainUI mainFrame;
+
+    public static ResourceBundle guiBundle = ResourceBundle.getBundle("locale/gui");
+    public static ResourceBundle missionsBundle = ResourceBundle.getBundle("locale/missions");
+    public static ResourceBundle agentsBundle = ResourceBundle.getBundle("locale/agents");
 
     private JTabbedPane tabbedPane1;
     private JPanel panel1;
@@ -59,19 +64,19 @@ public class MainUI {
             }
         });
 
-        agentsTable.getColumn("Delete").setCellRenderer(new ButtonRenderer());
-        agentsTable.getColumn("Delete").setCellEditor(
-                new ButtonEditor(new JCheckBox("Delete"), "agent"));
-        agentsTable.getColumn("Detail").setCellRenderer(new ButtonRenderer());
-        agentsTable.getColumn("Detail").setCellEditor(
-                new ButtonEditor(new JCheckBox("Detail"), "agent"));
+        agentsTable.getColumn(guiBundle.getString("Gui.Base.Delete")).setCellRenderer(new ButtonRenderer());
+        agentsTable.getColumn(guiBundle.getString("Gui.Base.Delete")).setCellEditor(
+                new ButtonEditor(new JCheckBox(guiBundle.getString("Gui.Base.Delete")), "agent"));
+        agentsTable.getColumn(guiBundle.getString("Gui.Base.Details")).setCellRenderer(new ButtonRenderer());
+        agentsTable.getColumn(guiBundle.getString("Gui.Base.Details")).setCellEditor(
+                new ButtonEditor(new JCheckBox(guiBundle.getString("Gui.Base.Details")), "agent"));
 
-        missionsTable.getColumn("Delete").setCellRenderer(new ButtonRenderer());
-        missionsTable.getColumn("Delete").setCellEditor(
-                new ButtonEditor(new JCheckBox("Delete"), "mission"));
-        missionsTable.getColumn("Detail").setCellRenderer(new ButtonRenderer());
-        missionsTable.getColumn("Detail").setCellEditor(
-                new ButtonEditor(new JCheckBox("Detail"), "mission"));
+        missionsTable.getColumn(guiBundle.getString("Gui.Base.Delete")).setCellRenderer(new ButtonRenderer());
+        missionsTable.getColumn(guiBundle.getString("Gui.Base.Delete")).setCellEditor(
+                new ButtonEditor(new JCheckBox(guiBundle.getString("Gui.Base.Delete")), "mission"));
+        missionsTable.getColumn(guiBundle.getString("Gui.Base.Details")).setCellRenderer(new ButtonRenderer());
+        missionsTable.getColumn(guiBundle.getString("Gui.Base.Details")).setCellEditor(
+                new ButtonEditor(new JCheckBox(guiBundle.getString("Gui.Base.Details")), "mission"));
 
 
         addAgentButton.addActionListener(new ActionListener() {
@@ -229,7 +234,7 @@ class ButtonEditor extends DefaultCellEditor {
 
     public Object getCellEditorValue() {
         if (isPushed) {
-            if(label=="Detail") {
+            if(label==MainUI.guiBundle.getString("Gui.Base.Details")) {
                 if(model=="agent") {
                     DetailAgent detail = new DetailAgent(id);
                     detail.pack();
@@ -243,8 +248,8 @@ class ButtonEditor extends DefaultCellEditor {
                     detail.setVisible(true);
                 }
             }
-            if(label=="Delete") {
-                int dialogResult = JOptionPane.showConfirmDialog(MainUI.mainFrame.getPanel1(), "Are you sure ?", "Delete " + model + " ?", JOptionPane.YES_NO_OPTION);
+            if(label==MainUI.guiBundle.getString("Gui.Base.Delete")) {
+                int dialogResult = JOptionPane.showConfirmDialog(MainUI.mainFrame.getPanel1(), MainUI.guiBundle.getString("Gui.Base.AreYouSure"), MainUI.guiBundle.getString("Gui.Base.Delete") + " ?", JOptionPane.YES_NO_OPTION);
                 if(dialogResult==0) {
                     if(model=="agent") {
                         AgentDeleteWorker worker = new AgentDeleteWorker();

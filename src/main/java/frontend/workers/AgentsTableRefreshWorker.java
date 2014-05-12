@@ -5,7 +5,6 @@ import frontend.base.ui.MainUI;
 import frontend.models.AgentsTableDataModel;
 
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -29,7 +28,7 @@ public class AgentsTableRefreshWorker extends SwingWorker<List<Agent>, Void> {
             for(Agent agent :  agents) {
                 AgentsTableDataModel.getInstance().addAgent(agent);
             }
-            MainUI.mainFrame.getAgents_count_label().setText("Agents in system : " + agents.size());
+            MainUI.mainFrame.getAgents_count_label().setText(MainUI.agentsBundle.getString("Gui.Agents.Count.Label") + agents.size());
             MainUI.mainFrame.getRefreshAgentsButton().setEnabled(true);
         } catch (ExecutionException ex) {
             System.out.println("Error");

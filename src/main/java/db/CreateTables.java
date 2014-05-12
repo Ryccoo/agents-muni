@@ -1,11 +1,8 @@
 package db;
 
-import backend.Mission;
 import org.apache.commons.dbcp.BasicDataSource;
 import utils.DBUtils;
 
-import javax.sql.DataSource;
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -21,8 +18,7 @@ public class CreateTables {
     }
 
     public static void main(String [ ] args) throws SQLException {
-
-        String jdbc_path = System.getenv("Database");
+        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
         BasicDataSource dataSource = prepareDataSource(jdbc_path);
 
         Connection conn = null;

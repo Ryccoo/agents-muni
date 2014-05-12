@@ -1,6 +1,7 @@
 package frontend.dialogs.ui;
 
 import backend.Mission;
+import frontend.base.ui.MainUI;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -59,15 +60,15 @@ public class MissionDialog extends JDialog {
         destination_required.setText("");
         boolean valid = true;
         if(mission_name.getText().isEmpty()) {
-            name_required.setText("Name is required");
+            name_required.setText(MainUI.missionsBundle.getString("Gui.Missions.Validations.Name.Required"));
             valid = false;
         }
         if(mission_description.getText().isEmpty()) {
-            description_required.setText("Description is required");
+            description_required.setText(MainUI.missionsBundle.getString("Gui.Missions.Validations.Description.Required"));
             valid = false;
         }
         if(mission_destinaion.getText().isEmpty()) {
-            destination_required.setText("Destination is required");
+            destination_required.setText(MainUI.missionsBundle.getString("Gui.Missions.Validations.Destination.Required"));
             valid = false;
         }
         if(valid) {
