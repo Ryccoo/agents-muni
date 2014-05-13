@@ -28,7 +28,7 @@ public class MissionTableRefreshWorker extends SwingWorker<List<Mission>, Void> 
             for(Mission mission :  missions) {
                 MissionsTableDataModel.getInstance().addMission(mission);
             }
-            MainUI.mainFrame.getMissions_count_label().setText("Missions in system : " + missions.size());
+            MainUI.mainFrame.getMissions_count_label().setText(MainUI.missionsBundle.getString("Gui.Missions.Count.Label") + missions.size());
             MainUI.mainFrame.getRefreshMissionsButton().setEnabled(true);
         } catch (ExecutionException ex) {
             System.out.println("Error");

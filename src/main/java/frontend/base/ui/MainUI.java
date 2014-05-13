@@ -249,6 +249,9 @@ class ButtonEditor extends DefaultCellEditor {
                 }
             }
             if(label==MainUI.guiBundle.getString("Gui.Base.Delete")) {
+                UIManager.put("OptionPane.yesButtonText", MainUI.guiBundle.getString("Gui.Base.Yes"));
+                UIManager.put("OptionPane.noButtonText", MainUI.guiBundle.getString("Gui.Base.No"));
+
                 int dialogResult = JOptionPane.showConfirmDialog(MainUI.mainFrame.getPanel1(), MainUI.guiBundle.getString("Gui.Base.AreYouSure"), MainUI.guiBundle.getString("Gui.Base.Delete") + " ?", JOptionPane.YES_NO_OPTION);
                 if(dialogResult==0) {
                     if(model=="agent") {
