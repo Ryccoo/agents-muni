@@ -7,9 +7,7 @@ import utils.ServiceFailureException;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,6 +60,7 @@ public class AssigmentManagerImpl implements AssigmentManager {
             int inserted = st.executeUpdate();
             DBUtils.checkUpdatesCount(inserted, agent, false);
             conn.commit();
+            logger.log(Level.INFO, "Agent assigned to mission");
         } catch (SQLException ex) {
             String msg = "SQL Error when adding agent to mission";
             logger.log(Level.SEVERE, msg, ex);
@@ -98,6 +97,7 @@ public class AssigmentManagerImpl implements AssigmentManager {
             int deleted = st.executeUpdate();
             DBUtils.checkUpdatesCount(deleted, agent, false);
             conn.commit();
+            logger.log(Level.INFO, "Agent removed from mission");
         } catch (SQLException ex) {
             String msg = "SQL Error when adding agent to mission";
             logger.log(Level.SEVERE, msg, ex);
@@ -123,6 +123,7 @@ public class AssigmentManagerImpl implements AssigmentManager {
             st = conn.prepareStatement(
                     "SELECT id, name, rank, secret FROM agents INNER JOIN agents_missions ON agents_missions.agentid = agents.id WHERE agents_missions.missionId = ?"); // need a statement here :D
             st.setLong(1, mission.getId());
+            logger.log(Level.INFO, "Mission agents collected");
             return AgentManagerImpl.executeQueryForMultipleAgents(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all mission agents from DB";
@@ -149,6 +150,7 @@ public class AssigmentManagerImpl implements AssigmentManager {
             st = conn.prepareStatement(
                     "SELECT id, name, destination, description, secret FROM missions INNER JOIN agents_missions ON agents_missions.missionid = missions.id WHERE agents_missions.agentId = ?");
             st.setLong(1, agent.getId());
+            logger.log(Level.INFO, "Agent missions collected");
             return MissionManagerImpl.executeQueryForMultipleMissions(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all missions from DB";
@@ -165,6 +167,7 @@ public class AssigmentManagerImpl implements AssigmentManager {
         for(Mission mission : missions) {
             removeAgentFromMission(agent, mission);
         }
+        logger.log(Level.INFO, "All agent missions associations removed");
     }
 
     @Override
@@ -173,5 +176,6 @@ public class AssigmentManagerImpl implements AssigmentManager {
         for(Agent agent : agents) {
             removeAgentFromMission(agent, mission);
         }
+        logger.log(Level.INFO, "All mission agents associations removed");
     }
 }

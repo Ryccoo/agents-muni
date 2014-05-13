@@ -58,6 +58,7 @@ public class MissionManagerImpl implements MissionManager {
             Long id = DBUtils.getId(st.getGeneratedKeys());
             mission.setId(id);
             conn.commit();
+            logger.log(Level.INFO, "Mission created");
         } catch (SQLException ex) {
             String msg = "Error when inserting mission into db";
             logger.log(Level.SEVERE, msg, ex);
@@ -91,6 +92,7 @@ public class MissionManagerImpl implements MissionManager {
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, mission, false);
             conn.commit();
+            logger.log(Level.INFO, "Mission removed");
         } catch (SQLException ex) {
             String msg = "Error when deleting mission from the db";
             logger.log(Level.SEVERE, msg, ex);
@@ -110,6 +112,7 @@ public class MissionManagerImpl implements MissionManager {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
                     "SELECT id, name, description, destination, secret FROM missions");
+            logger.log(Level.INFO, "All missions found");
             return executeQueryForMultipleMissions(st);
         } catch (SQLException ex) {
             String msg = "Error when getting all missions from DB";
@@ -135,6 +138,7 @@ public class MissionManagerImpl implements MissionManager {
             st = conn.prepareStatement(
                     "SELECT id, name, description, destination, secret FROM missions WHERE id = ?");
             st.setLong(1, id);
+            logger.log(Level.INFO, "Mission found");
             return executeQueryForSingleMission(st);
         } catch (SQLException ex) {
             String msg = "Error when getting mission with id = " + id + " from DB";
@@ -170,6 +174,7 @@ public class MissionManagerImpl implements MissionManager {
             int count = st.executeUpdate();
             DBUtils.checkUpdatesCount(count, mission, false);
             conn.commit();
+            logger.log(Level.INFO, "Mission updated");
         } catch (SQLException ex) {
             String msg = "Error when updating mission in the db";
             logger.log(Level.SEVERE, msg, ex);

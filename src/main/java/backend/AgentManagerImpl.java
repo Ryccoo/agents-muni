@@ -52,6 +52,7 @@ public class AgentManagerImpl implements AgentManager {
             int updated = st.executeUpdate();
             DBUtils.checkUpdatesCount(updated, agent, false);
             conn.commit();
+            logger.log(Level.INFO, "Agent updated");
         } catch (SQLException ex) {
             String msg = "Error when updating agent in the db";
             logger.log(Level.SEVERE, msg, ex);
@@ -78,6 +79,7 @@ public class AgentManagerImpl implements AgentManager {
             st = conn.prepareStatement(
                     "SELECT id, name, rank, secret FROM agents WHERE id = ?");
             st.setLong(1, id);
+            logger.log(Level.INFO, "Agent found");
             return executeQueryForSingleAgent(st);
         } catch (SQLException ex) {
             String msg = "Error when retrieving agent with id = " + id + " from DB";
@@ -98,6 +100,7 @@ public class AgentManagerImpl implements AgentManager {
             conn = dataSource.getConnection();
             st = conn.prepareStatement(
                     "SELECT id,name,rank,secret FROM agents");
+            logger.log(Level.INFO, "All agents found");
             return executeQueryForMultipleAgents(st);
         } catch (SQLException ex) {
             String msg = "Error when retrieving all agents";
@@ -128,6 +131,7 @@ public class AgentManagerImpl implements AgentManager {
             int deleted = st.executeUpdate();
             DBUtils.checkUpdatesCount(deleted, agent, false);
             conn.commit();
+            logger.log(Level.INFO, "Agent removed");
         } catch( SQLException ex) {
             String msg = "Error when removing agent " + agent;
             logger.log(Level.SEVERE, msg, ex);
@@ -161,6 +165,7 @@ public class AgentManagerImpl implements AgentManager {
             Long id = DBUtils.getId(st.getGeneratedKeys());
             agent.setId(id);
             conn.commit();
+            logger.log(Level.INFO, "Agent created");
         } catch (SQLException ex) {
             String msg = "Error when inserting agent " + agent;
             logger.log(Level.SEVERE, msg, ex);
