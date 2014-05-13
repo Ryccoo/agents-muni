@@ -41,6 +41,7 @@ public class MainUI {
     private JLabel agents_count_label;
     private JLabel missions_count_label;
     private JTable missionsTable;
+    private JLabel doge_icon;
 
     public MainUI() {
         agentsTable.setModel(AgentsTableDataModel.getInstance());
@@ -103,13 +104,17 @@ public class MainUI {
                 mdialog.setModal(true);
                 mdialog.setVisible(true);
                 Mission newMission = mdialog.getMission();
-                if(newMission != null) {
+                if (newMission != null) {
                     MissionsTableAddMissionWorker worker = new MissionsTableAddMissionWorker();
                     worker.setMission_to_perform(newMission);
                     worker.execute();
                 }
             }
         });
+
+        Icon image = new ImageIcon(getClass().getResource("/doge.jpg"));
+        doge_icon.setIcon(image);
+
     }
 
     public static void main(String[] args) {
