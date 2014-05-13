@@ -3,6 +3,7 @@ package web;
 import backend.AgentManagerImpl;
 import backend.AssigmentManagerImpl;
 import backend.MissionManagerImpl;
+import config.IsisConfig;
 import db.CreateTables;
 import org.apache.commons.dbcp.BasicDataSource;
 
@@ -22,7 +23,7 @@ public class ServerListener implements ServletContextListener {
         System.out.println("aplikace inicializována");
         ServletContext servletContext = ev.getServletContext();
         BasicDataSource ds;
-        ds = CreateTables.prepareDataSource(System.getenv("ISIS_JDBC_PATH"));
+        ds = CreateTables.prepareDataSource(IsisConfig.getProperty("JdbcPath"));
         ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
 
         AgentManagerImpl agentm = new AgentManagerImpl();

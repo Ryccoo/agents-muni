@@ -1,21 +1,19 @@
 package test;
 
 import backend.Mission;
-import backend.MissionManager;
 import backend.MissionManagerImpl;
+import config.IsisConfig;
 import db.MissionTable;
-
+import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.*;
 import utils.DBUtils;
-import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.sql.DataSource;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +25,7 @@ public class MissionManagerImplTest {
     private DataSource dataSource;
 
     private DataSource prepareDataSource() throws SQLException {
-        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
+        String jdbc_path = IsisConfig.getProperty("TestJdbcPath");
         BasicDataSource dataSource = new BasicDataSource();
         //we will use in memory database
         dataSource.setUrl(jdbc_path);

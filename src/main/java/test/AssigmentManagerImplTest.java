@@ -1,30 +1,28 @@
 package test;
 
 import backend.*;
-
-import static test.AgentManagerImplTest.newAgent;
-import static test.AgentManagerImplTest.assertDeepEquals;
-import static test.MissionManagerImplTest.newMission;
-import static test.MissionManagerImplTest.assertDeepEquals;
-
+import config.IsisConfig;
 import db.AgentsMissionsTable;
 import db.AgentsTable;
 import db.MissionTable;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import java.util.*;
-import org.apache.commons.dbcp.BasicDataSource;
 import utils.DBUtils;
 import utils.IllegalEntityException;
 
-import javax.naming.Context;
 import javax.sql.DataSource;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static test.AgentManagerImplTest.assertDeepEquals;
+import static test.AgentManagerImplTest.newAgent;
+import static test.MissionManagerImplTest.assertDeepEquals;
+import static test.MissionManagerImplTest.newMission;
 
 /**
  * Created by richard on 31.3.2014.
@@ -36,7 +34,7 @@ public class AssigmentManagerImplTest {
     private DataSource dataSource;
 
     private DataSource prepareDataSource() throws SQLException {
-        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
+        String jdbc_path = IsisConfig.getProperty("TestJdbcPath");
         BasicDataSource dataSource = new BasicDataSource();
         //we will use in memory database
         dataSource.setUrl(jdbc_path);

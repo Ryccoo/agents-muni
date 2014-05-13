@@ -1,5 +1,6 @@
 package db;
 
+import config.IsisConfig;
 import org.apache.commons.dbcp.BasicDataSource;
 import utils.DBUtils;
 
@@ -18,7 +19,7 @@ public class CreateTables {
     }
 
     public static void main(String [ ] args) throws SQLException {
-        String jdbc_path = System.getenv("ISIS_JDBC_PATH");
+        String jdbc_path = IsisConfig.getProperty("JdbcPath");
         BasicDataSource dataSource = prepareDataSource(jdbc_path);
 
         Connection conn = null;

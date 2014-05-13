@@ -1,6 +1,7 @@
 package frontend.base.ui;
 
 import backend.*;
+import config.IsisConfig;
 import db.CreateTables;
 import frontend.detail.ui.DetailAgent;
 import frontend.detail.ui.DetailMission;
@@ -133,7 +134,7 @@ public class MainUI {
 
         // Prepare datasource
         BasicDataSource ds;
-        ds = CreateTables.prepareDataSource(System.getenv("ISIS_JDBC_PATH"));
+        ds = CreateTables.prepareDataSource(IsisConfig.getProperty("JdbcPath"));
         ds.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
         agentsManager.setDataSource(ds);
         assigmentManager.setDataSource(ds);
