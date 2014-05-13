@@ -66,6 +66,8 @@ public class AgentDialog extends JDialog {
         }
         if(valid) {
             dispose();
+        } else {
+            this.pack();
         }
     }
 

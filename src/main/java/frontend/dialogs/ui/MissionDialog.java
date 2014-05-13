@@ -73,6 +73,8 @@ public class MissionDialog extends JDialog {
         }
         if(valid) {
             dispose();
+        } else {
+            this.pack();
         }
     }
 
